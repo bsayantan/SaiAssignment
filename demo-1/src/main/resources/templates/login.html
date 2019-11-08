@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login Portal</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  
+  <script src="https://code.jquery.com/jquery-git.js"></script>
+</head>
+
+<body>
+
+<div class="container" id="logindiv">  
+    <label for="username" class="mb-2 mr-sm-2" >Username:</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" id="username" placeholder="Enter Username" name="username">
+    <label for="password" class="mb-2 mr-sm-2">Password:</label>
+    <input type="password" class="form-control mb-2 mr-sm-2" id="password" placeholder="Enter password" name="password">
+    <h1 id="msg" style="color: rgb(177, 78, 78);"></h1>
+    <button type="submit" class="btn btn-primary mb-2" onclick="validateuser()">Login</button>
+    <button id="register" class="btn btn-primary mb-2" onclick="loadsignuppage()">Register</button>
+    
+</div >
+
+<div class="container" id="registerdiv">  
+    <label for="name" class="mb-2 mr-sm-2" >Enter Full Name:</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" id="name" placeholder="Enter Full Name" name="fullname">
+    <label for="newemail" class="mb-2 mr-sm-2">Enter Email:</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" id="newemail" placeholder="Enter Email" name="newemail">
+    <label for="mobileno" class="mb-2 mr-sm-2" >Enter Mobile Number:</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" id="mobileno" placeholder="Enter Mobile Number" name="mobileno">
+    <label for="newusername" class="mb-2 mr-sm-2">Create New Username:</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" id="newusername" placeholder="Enter Username" name="newusername">
+    <label for="newpassword" class="mb-2 mr-sm-2">Create New Password:</label>
+    <input type="password" class="form-control mb-2 mr-sm-2" id="newpassword" placeholder="Enter password" name="newpassword">
+    <button type="submit" class="btn btn-primary mb-2" onclick="gotologinfromreg()">Submit</button>
+    
+</div >
+<div id="sucessdashboard">
+  <h1>Hello....!!!</h1>
+  <h2>This is your Dashboard you have Sucessfully logged in....!!!!</h2>
+  <button type="submit" class="btn btn-primary mb-2" onclick="gotologin()">Logout</button>
+</div>
+<div id="Faildashboard">
+    <h1 style="color: red;">Login Failed....!!!</h1>
+    <button type="submit" class="btn btn-primary mb-2" onclick="gotologin()">Try Again</button>    
+</div>
+</body>
+<script>
+  $("#registerdiv").hide();
+  $("#sucessdashboard").hide();
+  $("#Faildashboard").hide();
+      
+      function gotologin()
+      {
+        location.reload();
+      }
+      function gotologinfromreg()
+      {
+        var name = document.getElementById("name").value;
+        var newemail = document.getElementById("newemail").value;
+        var mobile = document.getElementById("mobileno").value;
+        var newusername = document.getElementById("newusername").value;
+        var newpassword = document.getElementById("newpassword").value;
+        const newuser = {
+        		username : newusername,
+        		name : name,
+        		email : newemail,
+        		mobileno : mobile,
+        		password : newpassword
+        }
+        var temp = "hii";
+
+        const userobj = JSON.stringify(newuser);
+        $.ajax({
+          type: 'POST',
+          url: '/register',
+          headers: {
+        	  "Content-Type": "application/json"
+          },
+          data: JSON.stringify(newuser),
+          success: function(data){
+        	  console.log("POST API RESPONSE: "+data);
+        	  alert("User Registred Successfully...!!!");
+              location.reload();
+          },
+          error: function (jqXHR,testStatus,errorThrown){
+        	  alert("Registration Failed...!!!");
+              location.reload();
+          }
+        });        
+      }
+      
+function validateuser(){ 
+
+    
+var username = document.getElementById("username").value;
+var pass = document.getElementById("password").value;
+var msg = document.getElementById("msg");
+if(username==""&&pass=="")
+msg.innerHTML="Please Enter Username and Password";
+else if(username=="")
+msg.innerHTML="Please Enter Username";
+else if(pass=="")
+msg.innerHTML="Please Enter Password";
+else    
+    {
+	var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    const loger = {
+    		username : username,
+    		password : password
+    }       
+    
+    $.ajax({
+      type: 'POST',
+      url: '/validate',
+      headers: {
+    	  "Content-Type": "application/json"
+      },
+      data: JSON.stringify(loger),
+      success: function(data){
+    	  console.log("POST API RESPONSE: "+data);
+    	  if(data=="true")
+          {
+            $("#logindiv").hide();
+            $("#sucessdashboard").show();
+          }
+          else{
+            $("#logindiv").hide();
+            $("#Faildashboard").show();
+          }
+      },
+      error: function (jqXHR,testStatus,errorThrown){
+    	  alert("Error please try again later...!!!");
+        location.reload();
+      }
+
+    });
+    }
+}
+function loadsignuppage()
+  {        
+    $("#logindiv").hide();
+    $("#registerdiv").show();
+
+  }
+  
+</script>
+</html>
